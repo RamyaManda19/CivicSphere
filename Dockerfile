@@ -40,7 +40,8 @@ ENV CP="classes:lib/servlet-api.jar:lib/gson.jar:lib/mysql-connector.jar"
 ENV PORT=10000
 
 # Copy DB properties (optional, can be overridden by env)
-COPY src/main/resources/db.properties ./db.properties
+COPY --from=build /app/src/main/resources/db.properties ./db.properties
 
-# Start application
+
+
 ENTRYPOINT ["sh","-c","java -cp \"${CP}\" com.civicsphere.CivicSphereServer ${PORT:-10000}"]
