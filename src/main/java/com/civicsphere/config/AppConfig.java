@@ -9,7 +9,7 @@ import java.util.logging.Logger;
  * Application configuration loader.
  * Reads configurations from db.properties with environment variable override support.
  */
-public class AppConfig {
+
 
     private static final Logger LOGGER = Logger.getLogger(AppConfig.class.getName());
     private static final Properties properties = new Properties();
@@ -65,7 +65,18 @@ public class AppConfig {
         }
     }
 
-    public static double getRecurrenceScoreThreshold() {
+    /**
+    * Returns the port the server should bind to.
+    * Checks the environment variable PORT (as Render provides) and falls back to 10000.
+    */
+    public static int getServerPort() {
+        String envPort = System.getenv("PORT");
+        if (envPort != null) {
+            try { return Integer.parseInt(envPort); } catch (NumberFormatException ignored) {}
+        }
+        return 10000; // default for local dev
+    }
+
         try {
             return Double.parseDouble(getProperty("recurrence.score.threshold", "70.0"));
         } catch (NumberFormatException e) {

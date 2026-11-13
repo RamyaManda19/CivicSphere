@@ -24,7 +24,7 @@ WORKDIR /app
 COPY --from=build /app/target/classes ./classes
 
 # Copy static front‑end files
-COPY src/main/webapp ./webapp
+COPY src/main/webapp ./src/main/webapp
 
 # Download required libraries
 RUN apk add --no-cache curl && \

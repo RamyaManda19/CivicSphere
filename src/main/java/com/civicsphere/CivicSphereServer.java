@@ -31,6 +31,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
+import com.civicsphere.config.AppConfig;
 
 /**
  * Standalone Embedded Server for CivicSphere.
@@ -59,7 +60,7 @@ public class CivicSphereServer {
     }
 
     public static void main(String[] args) throws Exception {
-        int port = DEFAULT_PORT;
+        int port = AppConfig.getServerPort();
         if (args.length > 0) {
             try { port = Integer.parseInt(args[0]); } catch (NumberFormatException ignored) {}
         }
