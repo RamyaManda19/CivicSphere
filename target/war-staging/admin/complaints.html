@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complaint Management - CivicSphere Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="/admin/dashboard.html" style="color:#fff; display:flex; align-items:center; gap:0.5rem;">
+        <span>🏛️ CivicSphere</span>
+        <span class="badge-sphere" style="background:#0284c7;">Admin Portal</span>
+      </a>
+    </div>
+    <div id="userBadgeContainer"></div>
+  </nav>
+
+  <div class="portal-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-title">Administration</div>
+      <ul class="sidebar-menu">
+        <li><a href="/admin/dashboard.html">📊 Analytics Overview</a></li>
+        <li><a href="/admin/complaints.html" class="active">📋 Complaint Management</a></li>
+        <li><a href="/admin/recurrence.html">⚠️ Recurring Civic Issues</a></li>
+        <li><a href="/admin/departments.html">🏢 Department Operations</a></li>
+      </ul>
+      <div class="sidebar-title" style="margin-top:auto;">Session</div>
+      <ul class="sidebar-menu">
+        <li><a href="javascript:void(0)" onclick="Auth.logout()">🚪 Sign Out</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Complaint Management</h1>
+          <p class="page-subtitle">Review, assign to departments, update progress, and verify resolution accountability</p>
+        </div>
+      </div>
+
+      <!-- Filters & Search Toolbar -->
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1.5rem;">
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center;">
+          <div style="flex:2; min-width:240px;">
+            <input type="text" id="filterSearch" class="form-control" placeholder="Search by ID, title, citizen name..." oninput="Admin.loadAdminComplaints()">
+          </div>
+          <div style="flex:1; min-width:180px;">
+            <select id="filterStatus" class="form-control" onchange="Admin.loadAdminComplaints()">
+              <option value="">All Statuses</option>
+              <option value="SUBMITTED">SUBMITTED</option>
+              <option value="UNDER REVIEW">UNDER REVIEW</option>
+              <option value="ASSIGNED">ASSIGNED</option>
+              <option value="IN PROGRESS">IN PROGRESS</option>
+              <option value="RESOLVED">RESOLVED</option>
+              <option value="CLOSED">CLOSED</option>
+            </select>
+          </div>
+          <div style="flex:1; min-width:180px;">
+            <select id="filterCategory" class="form-control" onchange="Admin.loadAdminComplaints()">
+              <option value="">All Categories</option>
+            </select>
+          </div>
+          <button onclick="Admin.loadAdminComplaints()" class="btn btn-secondary">🔍 Refresh</button>
+        </div>
+      </div>
+
+      <!-- Complaints Table -->
+      <div class="card">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title & Citizen</th>
+                <th>Category</th>
+                <th>Department</th>
+                <th>Location</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminComplaintsTable">
+              <tr><td colspan="8" style="text-align:center; padding:2rem;">Loading complaints...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal: Assign Department -->
+  <div id="assignModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="assignModalTitle">Assign Department</h3>
+        <button class="modal-close" onclick="closeModal('assignModal')">&times;</button>
+      </div>
+      <form onsubmit="Admin.handleAssignSubmit(event)">
+        <input type="hidden" id="assignComplaintId">
+        <div class="form-group">
+          <label class="form-label" for="assignDeptSelect">Select Department *</label>
+          <select id="assignDeptSelect" class="form-control" required>
+            <option value="">Loading departments...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="assignRemarks">Assignment Remarks</label>
+          <textarea id="assignRemarks" class="form-control" rows="3" placeholder="Work order instructions for department crew..."></textarea>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('assignModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Confirm Assignment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Update Status -->
+  <div id="statusModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Update Complaint Status</h3>
+        <button class="modal-close" onclick="closeModal('statusModal')">&times;</button>
+      </div>
+      <form onsubmit="Admin.handleStatusSubmit(event)">
+        <input type="hidden" id="statusComplaintId">
+        <div class="form-group">
+          <label class="form-label" for="newStatusSelect">New Status *</label>
+          <select id="newStatusSelect" class="form-control" required>
+            <option value="UNDER REVIEW">UNDER REVIEW</option>
+            <option value="ASSIGNED">ASSIGNED</option>
+            <option value="IN PROGRESS">IN PROGRESS</option>
+            <option value="RESOLVED">RESOLVED</option>
+            <option value="CLOSED">CLOSED</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="statusRemarks">Audit Remarks *</label>
+          <textarea id="statusRemarks" class="form-control" rows="3" placeholder="State reason or progress update (recorded in audit history)..." required></textarea>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('statusModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Status</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Resolve Complaint -->
+  <div id="resolveModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Verify & Resolve Complaint</h3>
+        <button class="modal-close" onclick="closeModal('resolveModal')">&times;</button>
+      </div>
+      <form onsubmit="Admin.handleResolveSubmit(event)">
+        <input type="hidden" id="resolveComplaintId">
+        <div class="form-group">
+          <label class="form-label" for="resolveRemarks">Resolution Remarks & Evidence *</label>
+          <textarea id="resolveRemarks" class="form-control" rows="4" placeholder="Detail the repairs performed, materials used, and contractor/crew involved..." required></textarea>
+        </div>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1.25rem;">
+          ℹ️ Marking resolved activates the Recurrence Engine watch. If the problem fails again within this vicinity, a recurrence alert will be generated automatically.
+        </p>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('resolveModal')">Cancel</button>
+          <button type="submit" class="btn btn-success">Verify & Mark Resolved</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/complaints.js"></script>
+  <script src="/js/admin.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.requireAuth('ADMIN');
+      await Complaints.loadCategories('filterCategory');
+      await Admin.loadAdminComplaints();
+    });
+  </script>
+</body>
+</html>

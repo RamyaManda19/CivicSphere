@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CivicSphere - Smart Citizen Complaint Management & Recurring Civic Issue Detection</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #fff;
+      padding: 5rem 2rem 4rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 1rem;
+    }
+    .hero h1 span {
+      background: linear-gradient(135deg, #2dd4bf, #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      max-width: 760px;
+      margin: 0 auto 2rem;
+      color: #94a3b8;
+    }
+    .hero-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .section {
+      padding: 4rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .section-title h2 {
+      font-size: 2rem;
+      color: var(--primary);
+    }
+    .section-title p {
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .feature-card {
+      background: #fff;
+      padding: 2rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+    .feature-card .icon {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+    }
+    .workflow-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .step-card {
+      background: #fff;
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .demo-recurrence-box {
+      background: linear-gradient(to right, #f8fafc, #f1f5f9);
+      border: 2px dashed #0d9488;
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span>🏛️ CivicSphere</span>
+      <span class="badge-sphere">Smart City</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#recurrence-engine">Recurrence Engine</a></li>
+      <li><a href="/login.html" class="btn btn-sm btn-secondary" style="color:var(--primary); font-weight:700;">Sign In</a></li>
+      <li><a href="/register.html" class="btn btn-sm btn-primary">Citizen Register</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <h1>Transforming Urban Governance with <span>CivicSphere</span></h1>
+    <p>Smart Citizen Complaint Management with automated Recurring Civic Issue Detection. Tracking repeat infrastructure failures to enforce municipal accountability.</p>
+    <div class="hero-buttons">
+      <a href="/citizen/submit-complaint.html" class="btn btn-primary" style="padding:0.8rem 1.75rem; font-size:1.05rem;">📢 Report a Problem</a>
+      <a href="/login.html" class="btn btn-secondary" style="padding:0.8rem 1.75rem; font-size:1.05rem;">Portal Login</a>
+      <a href="/login.html?role=admin" class="btn btn-secondary" style="padding:0.8rem 1.5rem; background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.2);">🔒 Admin Access</a>
+    </div>
+  </header>
+
+  <!-- Problem Statement & Innovation -->
+  <section class="section" id="about">
+    <div class="section-title">
+      <h2>The Core Problem CivicSphere Solves</h2>
+      <p>Traditional complaint portals mark issues resolved, but fail to detect when the exact same pothole, leak, or drain fails again next week.</p>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-card" style="border-top: 4px solid #ef4444;">
+        <div class="icon">❌</div>
+        <h3>The Traditional Flaw</h3>
+        <p style="color:#64748b; margin-top:0.5rem;">A pothole is repaired with temporary asphalt. The complaint is closed as "Resolved". Ten days later, it breaks open again. Citizens file new tickets that are treated as brand new incidents, hiding contractor negligence.</p>
+      </div>
+
+      <div class="feature-card" style="border-top: 4px solid #0d9488;">
+        <div class="icon">🧠</div>
+        <h3>CivicSphere Innovation</h3>
+        <p style="color:#64748b; margin-top:0.5rem;">Our backend AI/Heuristic Recurrence Engine automatically correlates incoming complaints with past resolved complaints using GPS Haversine distance, normalized location matching, and semantic description overlap.</p>
+      </div>
+
+      <div class="feature-card" style="border-top: 4px solid #0284c7;">
+        <div class="icon">⚖️</div>
+        <h3>Resolution Accountability</h3>
+        <p style="color:#64748b; margin-top:0.5rem;">Administrators receive instant recurrence alerts linking new complaints to past work orders. Municipal leadership can audit whether previous repairs were substandard, enforcing strict contractor accountability.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="section" id="how-it-works" style="background:#fff; border-radius:var(--radius-lg); margin-bottom:3rem; border:1px solid var(--border);">
+    <div class="section-title">
+      <h2>End-to-End Workflow</h2>
+      <p>Seamless coordination between citizens and municipal departments</p>
+    </div>
+
+    <div class="workflow-steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h4>Citizen Reports</h4>
+        <p style="font-size:0.85rem; color:#64748b; margin-top:0.3rem;">Citizen submits title, description, category, photo evidence, and GPS coordinates.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h4>Department Action</h4>
+        <p style="font-size:0.85rem; color:#64748b; margin-top:0.3rem;">Admin assigns the ticket to Road, Water, Sanitation, or Drainage departments.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h4>Verified Resolution</h4>
+        <p style="font-size:0.85rem; color:#64748b; margin-top:0.3rem;">Department completes repair; admin enters resolution remarks and closes ticket.</p>
+      </div>
+      <div class="step-card" style="border: 2px solid var(--accent); background:#f0fdfa;">
+        <div class="step-num" style="background:#0f766e;">4</div>
+        <h4>Recurrence Watch</h4>
+        <p style="font-size:0.85rem; color:#0f766e; font-weight:600; margin-top:0.3rem;">If the same issue re-appears later, CivicSphere detects the repeat failure instantly!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recurrence Engine Demonstration Box -->
+  <section class="section" id="recurrence-engine">
+    <div class="section-title">
+      <h2>Automated Recurrence Engine in Action</h2>
+      <p>Scoring breakdown based on Category (30%), Location & GPS (40%), Description Similarity (20%), and Resolved Status (10%)</p>
+    </div>
+
+    <div class="demo-recurrence-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+        <div>
+          <span class="badge badge-recurrence" style="font-size:0.9rem;">⚠️ Recurrence Alert Generated</span>
+          <h3 style="margin-top:0.35rem; color:var(--primary);">Pothole at Kukatpally Metro Pillar 1142</h3>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:1.8rem; font-weight:800; color:#b91c1c;">88% Match Score</div>
+          <div style="font-size:0.8rem; color:#64748b;">Exceeds Recurrence Threshold (≥70%)</div>
+        </div>
+      </div>
+
+      <div class="compare-container">
+        <div class="compare-col" style="border-left: 4px solid #10b981;">
+          <h4>Original Complaint #1 (Resolved)</h4>
+          <p><strong>Category:</strong> Road Damage & Potholes (+30 pts)</p>
+          <p><strong>Location:</strong> Kukatpally, Pillar 1142 (+40 pts GPS match)</p>
+          <p><strong>Resolved Date:</strong> 10 days ago (Cold asphalt applied)</p>
+        </div>
+        <div class="compare-col" style="border-left: 4px solid #ef4444;">
+          <h4>New Complaint #2 (Submitted)</h4>
+          <p><strong>Reported:</strong> "Pothole reappeared at pillar 1142 near metro"</p>
+          <p><strong>Similarity:</strong> 72% keyword token overlap (+18 pts)</p>
+          <p><strong>Status:</strong> Automatically linked to #1 for Contractor Audit</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="background:var(--primary); color:#94a3b8; padding:3rem 2rem; text-align:center; font-size:0.9rem; border-top:1px solid #334155;">
+    <p><strong>CivicSphere</strong> - Smart Citizen Complaint Management & Recurring Civic Issue Detection System</p>
+    <p style="margin-top:0.5rem; font-size:0.8rem;">Built with Core Java Servlets, JDBC PreparedStatements, MySQL, Vanilla JS, and Chart.js</p>
+  </footer>
+
+</body>
+</html>

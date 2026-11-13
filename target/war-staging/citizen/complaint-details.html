@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complaint Details & Tracking - CivicSphere</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="/citizen/dashboard.html" style="color:#fff; display:flex; align-items:center; gap:0.5rem;">
+        <span>🏛️ CivicSphere</span>
+        <span class="badge-sphere">Citizen Portal</span>
+      </a>
+    </div>
+    <div id="userBadgeContainer"></div>
+  </nav>
+
+  <div class="portal-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-title">Menu</div>
+      <ul class="sidebar-menu">
+        <li><a href="/citizen/dashboard.html">📊 Overview</a></li>
+        <li><a href="/citizen/submit-complaint.html">📢 Report Issue</a></li>
+        <li><a href="/citizen/my-complaints.html" class="active">📑 My Complaints</a></li>
+      </ul>
+      <div class="sidebar-title" style="margin-top:auto;">Account</div>
+      <ul class="sidebar-menu">
+        <li><a href="javascript:void(0)" onclick="Auth.logout()">🚪 Sign Out</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="page-header">
+        <div>
+          <a href="/citizen/my-complaints.html" style="font-size:0.85rem; color:var(--text-muted); display:inline-block; margin-bottom:0.3rem;">← Back to My Complaints</a>
+          <h1 class="page-title" id="detailTitle">Complaint Details</h1>
+        </div>
+        <button id="btnReportRecurrence" class="btn btn-danger" style="display:none;">⚠️ Issue Reappeared? Report Recurrence</button>
+      </div>
+
+      <!-- Recurrence Detection Warning Box (Shown if correlated with a previous issue) -->
+      <div id="recurrenceAlertBox" class="recurrence-box" style="display:none;">
+        <div class="recurrence-header">
+          <span style="font-weight:700; color:#991b1b; font-size:1.1rem;">⚠️ Possible Recurring Civic Issue Detected</span>
+          <span class="score-badge" id="recScore">85% Match Score</span>
+        </div>
+        <p style="font-size:0.9rem; color:#7f1d1d;" id="recReason">This complaint shares category, location, and description patterns with a previously resolved issue.</p>
+      </div>
+
+      <!-- Main Complaint Information Card -->
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.25rem;">
+          <div>
+            <span id="detailStatus" class="badge">SUBMITTED</span>
+            <span style="font-size:0.85rem; color:var(--text-muted); margin-left:0.6rem;">Submitted on: <strong id="detailSubmittedAt">Loading...</strong></span>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; margin-bottom:1.5rem; background:#f8fafc; padding:1.25rem; border-radius:var(--radius-sm); border:1px solid var(--border);">
+          <div>
+            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-light); font-weight:700;">Category</div>
+            <div style="font-weight:600; color:var(--primary); margin-top:0.2rem;" id="detailCategory">-</div>
+          </div>
+          <div>
+            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-light); font-weight:700;">Department</div>
+            <div style="font-weight:600; color:var(--primary); margin-top:0.2rem;" id="detailDepartment">-</div>
+          </div>
+          <div>
+            <div style="font-size:0.75rem; text-transform:uppercase; color:var(--text-light); font-weight:700;">Location</div>
+            <div style="font-weight:600; color:var(--primary); margin-top:0.2rem;" id="detailLocation">-</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Problem Description</label>
+          <p id="detailDescription" style="color:var(--text-main); font-size:0.95rem; line-height:1.6; background:#fff; padding:0.75rem; border:1px solid var(--border); border-radius:6px;"></p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Citizen Evidence Photograph</label>
+          <div id="evidenceImageContainer">Loading photo...</div>
+        </div>
+
+        <!-- Resolution Remarks (if resolved) -->
+        <div id="resolutionInfoBox" style="display:none; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:var(--radius-sm); padding:1.25rem; margin-top:1.5rem;">
+          <h4 style="color:#065f46; margin-bottom:0.4rem;">✅ Resolution Verification Details</h4>
+          <p style="color:#047857; font-size:0.92rem;" id="resRemarks">Resolution remarks here...</p>
+          <div style="font-size:0.8rem; color:#059669; margin-top:0.4rem;">Resolved on: <span id="resDate">N/A</span></div>
+        </div>
+      </div>
+
+      <!-- Lifecycle Tracking Timeline -->
+      <div class="card">
+        <h3 class="card-title">Resolution Progress Timeline</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Complete audit log of actions taken by city officials and maintenance teams</p>
+        <div class="timeline" id="timelineContainer">
+          <p style="color:#64748b;">Loading status timeline...</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/complaints.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.requireAuth();
+      await Complaints.loadComplaintDetails();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recurring Civic Issues & Accountability - CivicSphere</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="/admin/dashboard.html" style="color:#fff; display:flex; align-items:center; gap:0.5rem;">
+        <span>🏛️ CivicSphere</span>
+        <span class="badge-sphere" style="background:#0284c7;">Admin Portal</span>
+      </a>
+    </div>
+    <div id="userBadgeContainer"></div>
+  </nav>
+
+  <div class="portal-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-title">Administration</div>
+      <ul class="sidebar-menu">
+        <li><a href="/admin/dashboard.html">📊 Analytics Overview</a></li>
+        <li><a href="/admin/complaints.html">📋 Complaint Management</a></li>
+        <li><a href="/admin/recurrence.html" class="active">⚠️ Recurring Civic Issues</a></li>
+        <li><a href="/admin/departments.html">🏢 Department Operations</a></li>
+      </ul>
+      <div class="sidebar-title" style="margin-top:auto;">Session</div>
+      <ul class="sidebar-menu">
+        <li><a href="javascript:void(0)" onclick="Auth.logout()">🚪 Sign Out</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Recurring Civic Issue Detection</h1>
+          <p class="page-subtitle">Accountability engine auditing repeated municipal infrastructure failures</p>
+        </div>
+      </div>
+
+      <!-- Recurrence Metric Cards -->
+      <div class="grid-cards">
+        <div class="stat-card" style="border-left: 4px solid #3b82f6;">
+          <div class="stat-info">
+            <h3>Total Identified</h3>
+            <div class="stat-number" id="recTotal">0</div>
+          </div>
+          <div class="stat-icon" style="background:#eff6ff; color:#3b82f6;">🔍</div>
+        </div>
+
+        <div class="stat-card" style="border-left: 4px solid #f59e0b;">
+          <div class="stat-info">
+            <h3>Awaiting Review</h3>
+            <div class="stat-number" id="recPending">0</div>
+          </div>
+          <div class="stat-icon" style="background:#fef3c7; color:#f59e0b;">⏳</div>
+        </div>
+
+        <div class="stat-card" style="border-left: 4px solid #ef4444;">
+          <div class="stat-info">
+            <h3>Confirmed Repeat Failures</h3>
+            <div class="stat-number" id="recConfirmed">0</div>
+          </div>
+          <div class="stat-icon" style="background:#fee2e2; color:#ef4444;">⚠️</div>
+        </div>
+
+        <div class="stat-card" style="border-left: 4px solid #64748b;">
+          <div class="stat-info">
+            <h3>Rejected Matches</h3>
+            <div class="stat-number" id="recRejected">0</div>
+          </div>
+          <div class="stat-icon" style="background:#f1f5f9; color:#64748b;">🛡️</div>
+        </div>
+      </div>
+
+      <!-- Filter Controls -->
+      <div class="card" style="padding:1rem 1.25rem; margin-bottom:1.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div style="font-weight:600; color:var(--primary);">Filter by Verification Status:</div>
+          <div style="display:flex; gap:0.75rem;">
+            <select id="filterVerification" class="form-control" style="width:200px;" onchange="Recurrence.loadRecurrenceRecords()">
+              <option value="">All Recurrence Records</option>
+              <option value="PENDING" selected>Pending Verification</option>
+              <option value="CONFIRMED">Confirmed Recurring</option>
+              <option value="REJECTED">Rejected Matches</option>
+            </select>
+            <button onclick="Recurrence.loadRecurrenceRecords()" class="btn btn-secondary">Refresh</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recurrence Cards Container -->
+      <div id="recurrenceCardsContainer">
+        <p style="text-align:center; padding:2rem; color:#64748b;">Loading recurring issue correlations...</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/recurrence.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      Recurrence.init();
+    });
+  </script>
+</body>
+</html>

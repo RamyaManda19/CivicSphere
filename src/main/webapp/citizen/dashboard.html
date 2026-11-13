@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Dashboard - CivicSphere</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="/citizen/dashboard.html" style="color:#fff; display:flex; align-items:center; gap:0.5rem;">
+        <span>🏛️ CivicSphere</span>
+        <span class="badge-sphere">Citizen Portal</span>
+      </a>
+    </div>
+    <div id="userBadgeContainer"></div>
+  </nav>
+
+  <!-- Portal Layout -->
+  <div class="portal-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-title">Menu</div>
+      <ul class="sidebar-menu">
+        <li><a href="/citizen/dashboard.html" class="active">📊 Overview</a></li>
+        <li><a href="/citizen/submit-complaint.html">📢 Report Issue</a></li>
+        <li><a href="/citizen/my-complaints.html">📑 My Complaints</a></li>
+      </ul>
+
+      <div class="sidebar-title" style="margin-top:auto;">Account</div>
+      <ul class="sidebar-menu">
+        <li><a href="javascript:void(0)" onclick="Auth.logout()">🚪 Sign Out</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" id="citizenGreeting">Citizen Dashboard</h1>
+          <p class="page-subtitle">Track your civic complaints and monitor repeat problem resolutions</p>
+        </div>
+        <a href="/citizen/submit-complaint.html" class="btn btn-primary">📢 Report New Issue</a>
+      </div>
+
+      <!-- Metric Stat Cards -->
+      <div class="grid-cards">
+        <div class="stat-card">
+          <div class="stat-info">
+            <h3>Total Complaints</h3>
+            <div class="stat-number" id="statTotal">0</div>
+          </div>
+          <div class="stat-icon" style="background:#eff6ff; color:#3b82f6;">📋</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <h3>Under Review</h3>
+            <div class="stat-number" id="statPending">0</div>
+          </div>
+          <div class="stat-icon" style="background:#fef3c7; color:#f59e0b;">⏳</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <h3>In Progress</h3>
+            <div class="stat-number" id="statInProgress">0</div>
+          </div>
+          <div class="stat-icon" style="background:#f3e8ff; color:#8b5cf6;">🔧</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <h3>Resolved</h3>
+            <div class="stat-number" id="statResolved">0</div>
+          </div>
+          <div class="stat-icon" style="background:#d1fae5; color:#10b981;">✅</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <h3>Recurring Issues</h3>
+            <div class="stat-number" id="statRecurring">0</div>
+          </div>
+          <div class="stat-icon" style="background:#fee2e2; color:#ef4444;">⚠️</div>
+        </div>
+      </div>
+
+      <!-- Quick Action Banner -->
+      <div class="card" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color:#fff; border:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <h3 style="font-size:1.25rem; font-weight:700;">Spot a pothole, leaking pipe, or garbage dump?</h3>
+            <p style="color:#94a3b8; font-size:0.92rem; margin-top:0.3rem;">Upload photographs and attach GPS coordinates for faster dispatch and automatic recurrence detection.</p>
+          </div>
+          <a href="/citizen/submit-complaint.html" class="btn btn-primary" style="white-space:nowrap;">File Complaint Now →</a>
+        </div>
+      </div>
+
+      <!-- Recent Complaints Activity -->
+      <div class="card">
+        <div class="card-title">
+          <span>Recent Complaints</span>
+          <a href="/citizen/my-complaints.html" style="font-size:0.85rem;">View All →</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title & Recurrence</th>
+                <th>Category</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="recentComplaintsTable">
+              <tr><td colspan="6" style="text-align:center; padding:2rem;">Loading complaints...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/citizen.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      Citizen.initDashboard();
+    });
+  </script>
+</body>
+</html>
+

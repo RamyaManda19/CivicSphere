@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Department Operations - CivicSphere Admin</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="/admin/dashboard.html" style="color:#fff; display:flex; align-items:center; gap:0.5rem;">
+        <span>🏛️ CivicSphere</span>
+        <span class="badge-sphere" style="background:#0284c7;">Admin Portal</span>
+      </a>
+    </div>
+    <div id="userBadgeContainer"></div>
+  </nav>
+
+  <div class="portal-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-title">Administration</div>
+      <ul class="sidebar-menu">
+        <li><a href="/admin/dashboard.html">📊 Analytics Overview</a></li>
+        <li><a href="/admin/complaints.html">📋 Complaint Management</a></li>
+        <li><a href="/admin/recurrence.html">⚠️ Recurring Civic Issues</a></li>
+        <li><a href="/admin/departments.html" class="active">🏢 Department Operations</a></li>
+      </ul>
+      <div class="sidebar-title" style="margin-top:auto;">Session</div>
+      <ul class="sidebar-menu">
+        <li><a href="javascript:void(0)" onclick="Auth.logout()">🚪 Sign Out</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Municipal Department Management</h1>
+          <p class="page-subtitle">Configure resolution departments and assign official contact channels</p>
+        </div>
+        <button onclick="openAddModal()" class="btn btn-primary">+ Add New Department</button>
+      </div>
+
+      <div class="card">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Department Name</th>
+                <th>Responsibilities / Description</th>
+                <th>Contact Email</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="departmentsTable">
+              <tr><td colspan="5" style="text-align:center; padding:2rem;">Loading departments...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal: Add Department -->
+  <div id="deptModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="deptModalTitle">Add Department</h3>
+        <button class="modal-close" onclick="closeModal('deptModal')">&times;</button>
+      </div>
+      <form onsubmit="handleDeptSubmit(event)">
+        <input type="hidden" id="deptId">
+        <div class="form-group">
+          <label class="form-label" for="deptName">Department Name *</label>
+          <input type="text" id="deptName" class="form-control" placeholder="e.g. Traffic Sign & Signals" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="deptDesc">Description *</label>
+          <textarea id="deptDesc" class="form-control" rows="3" placeholder="Core functions and maintenance scope..." required></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="deptEmail">Official Contact Email *</label>
+          <input type="email" id="deptEmail" class="form-control" placeholder="dept@civicsphere.gov" required>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.75rem; margin-top:1.5rem;">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('deptModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btnDeptSave">Save Department</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.requireAuth('ADMIN');
+      await loadDepartments();
+    });
+
+    async function loadDepartments() {
+      const tbody = document.getElementById('departmentsTable');
+      try {
+        const res = await fetch('/api/departments', { credentials: 'include' });
+        const json = await res.json();
+        const list = json.data || [];
+
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:2rem;">No departments configured.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = list.map(d => `
+          <tr>
+            <td><strong>#${d.departmentId}</strong></td>
+            <td><strong>${escapeHtml(d.departmentName)}</strong></td>
+            <td style="color:#64748b; font-size:0.88rem;">${escapeHtml(d.description)}</td>
+            <td><code>${escapeHtml(d.contactEmail)}</code></td>
+            <td>
+              <div style="display:flex; gap:0.4rem;">
+                <button onclick="openEditModal(${d.departmentId}, '${escapeHtml(d.departmentName)}', '${escapeHtml(d.description)}', '${escapeHtml(d.contactEmail)}')" class="btn btn-sm btn-secondary">Edit</button>
+                <button onclick="deleteDepartment(${d.departmentId})" class="btn btn-sm btn-danger">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Failed to load departments.</td></tr>';
+      }
+    }
+
+    function openAddModal() {
+      document.getElementById('deptId').value = '';
+      document.getElementById('deptModalTitle').textContent = 'Add Municipal Department';
+      document.getElementById('deptName').value = '';
+      document.getElementById('deptDesc').value = '';
+      document.getElementById('deptEmail').value = '';
+      document.getElementById('btnDeptSave').textContent = 'Create Department';
+      openModal('deptModal');
+    }
+
+    function openEditModal(id, name, desc, email) {
+      document.getElementById('deptId').value = id;
+      document.getElementById('deptModalTitle').textContent = `Edit Department #${id}`;
+      document.getElementById('deptName').value = name;
+      document.getElementById('deptDesc').value = desc;
+      document.getElementById('deptEmail').value = email;
+      document.getElementById('btnDeptSave').textContent = 'Update Department';
+      openModal('deptModal');
+    }
+
+    async function handleDeptSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('deptId').value;
+      const departmentName = document.getElementById('deptName').value.trim();
+      const description = document.getElementById('deptDesc').value.trim();
+      const contactEmail = document.getElementById('deptEmail').value.trim();
+
+      const method = id ? 'PUT' : 'POST';
+      const url = id ? `/api/departments/${id}` : '/api/departments';
+
+      try {
+        const res = await fetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ departmentName, description, contactEmail })
+        });
+        const json = await res.json();
+        if (!res.ok || !json.success) throw new Error(json.error || 'Operation failed');
+
+        showToast(id ? 'Department updated!' : 'Department created!', 'success');
+        closeModal('deptModal');
+        await loadDepartments();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    async function deleteDepartment(id) {
+      if (!confirm(`Are you sure you want to delete department #${id}?`)) return;
+      try {
+        const res = await fetch(`/api/departments/${id}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
+        const json = await res.json();
+        if (!res.ok || !json.success) throw new Error(json.error || 'Failed to delete');
+
+        showToast('Department deleted successfully', 'success');
+        await loadDepartments();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+    function escapeHtml(t) {
+      if (!t) return '';
+      const d = document.createElement('div');
+      d.textContent = t;
+      return d.innerHTML;
+    }
+  </script>
+</body>
+</html>
+

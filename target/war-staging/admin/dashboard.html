@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - CivicSphere</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Chart.js CDN for visual statistics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="/admin/dashboard.html" style="color:#fff; display:flex; align-items:center; gap:0.5rem;">
+        <span>🏛️ CivicSphere</span>
+        <span class="badge-sphere" style="background:#0284c7;">Admin Portal</span>
+      </a>
+    </div>
+    <div id="userBadgeContainer"></div>
+  </nav>
+
+  <div class="portal-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-title">Administration</div>
+      <ul class="sidebar-menu">
+        <li><a href="/admin/dashboard.html" class="active">📊 Analytics Overview</a></li>
+        <li><a href="/admin/complaints.html">📋 Complaint Management</a></li>
+        <li><a href="/admin/recurrence.html">⚠️ Recurring Civic Issues</a></li>
+        <li><a href="/admin/departments.html">🏢 Department Operations</a></li>
+      </ul>
+      <div class="sidebar-title" style="margin-top:auto;">Session</div>
+      <ul class="sidebar-menu">
+        <li><a href="javascript:void(0)" onclick="Auth.logout()">🚪 Sign Out</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Executive Operations Dashboard</h1>
+          <p class="page-subtitle">Civic infrastructure monitoring and resolution accountability metrics</p>
+        </div>
+        <div style="display:flex; gap:0.5rem;">
+          <a href="/admin/recurrence.html" class="btn btn-danger btn-sm">⚠️ Review Recurrences</a>
+          <a href="/admin/complaints.html" class="btn btn-primary btn-sm">Manage Complaints</a>
+        </div>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="grid-cards">
+        <div class="stat-card">
+          <div class="stat-info">
+            <h3>Total Reports</h3>
+            <div class="stat-number" id="statTotal">0</div>
+          </div>
+          <div class="stat-icon" style="background:#eff6ff; color:#3b82f6;">📋</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <h3>Pending Action</h3>
+            <div class="stat-number" id="statPending">0</div>
+          </div>
+          <div class="stat-icon" style="background:#fef3c7; color:#f59e0b;">⏳</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <h3>In Progress</h3>
+            <div class="stat-number" id="statInProgress">0</div>
+          </div>
+          <div class="stat-icon" style="background:#f3e8ff; color:#8b5cf6;">🔧</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <h3>Resolved</h3>
+            <div class="stat-number" id="statResolved">0</div>
+          </div>
+          <div class="stat-icon" style="background:#d1fae5; color:#10b981;">✅</div>
+        </div>
+
+        <div class="stat-card" style="border: 1px solid #fecdd3; background:#fff1f2;">
+          <div class="stat-info">
+            <h3 style="color:#991b1b;">Recurring Issues</h3>
+            <div class="stat-number" style="color:#b91c1c;" id="statRecurring">0</div>
+          </div>
+          <div class="stat-icon" style="background:#fee2e2; color:#ef4444;">⚠️</div>
+        </div>
+
+        <div class="stat-card" style="border: 1px solid #fed7aa; background:#fff7ed;">
+          <div class="stat-info">
+            <h3 style="color:#9a3412;">Awaiting Verification</h3>
+            <div class="stat-number" style="color:#c2410c;" id="statPendingRec">0</div>
+          </div>
+          <div class="stat-icon" style="background:#ffedd5; color:#ea580c;">🔍</div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap:1.5rem; margin-bottom:2rem;">
+        <div class="card">
+          <h3 class="card-title">Complaints by Category</h3>
+          <div style="position:relative; height:260px; display:flex; justify-content:center;">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">Work Orders by Department</h3>
+          <div style="position:relative; height:260px;">
+            <canvas id="departmentChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Complaints Activity -->
+      <div class="card">
+        <div class="card-title">
+          <span>Recent Activity & Submissions</span>
+          <a href="/admin/complaints.html" style="font-size:0.85rem;">View All Complaints →</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title & Reporter</th>
+                <th>Category</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="recentActivityTable">
+              <tr><td colspan="6" style="text-align:center; padding:2rem;">Loading activity...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/admin.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      Admin.initDashboard();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Civic Issue - CivicSphere</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="/citizen/dashboard.html" style="color:#fff; display:flex; align-items:center; gap:0.5rem;">
+        <span>🏛️ CivicSphere</span>
+        <span class="badge-sphere">Citizen Portal</span>
+      </a>
+    </div>
+    <div id="userBadgeContainer"></div>
+  </nav>
+
+  <div class="portal-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-title">Menu</div>
+      <ul class="sidebar-menu">
+        <li><a href="/citizen/dashboard.html">📊 Overview</a></li>
+        <li><a href="/citizen/submit-complaint.html" class="active">📢 Report Issue</a></li>
+        <li><a href="/citizen/my-complaints.html">📑 My Complaints</a></li>
+      </ul>
+      <div class="sidebar-title" style="margin-top:auto;">Account</div>
+      <ul class="sidebar-menu">
+        <li><a href="javascript:void(0)" onclick="Auth.logout()">🚪 Sign Out</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Form Area -->
+    <main class="main-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Submit Civic Complaint</h1>
+          <p class="page-subtitle">Provide details and evidence. Our system checks for recurring failures automatically.</p>
+        </div>
+      </div>
+
+      <!-- Recurrence Notice Banner (if triggered from resolved ticket) -->
+      <div id="recurrenceNotice" style="display:none; background:#fee2e2; border-left:4px solid #ef4444; padding:1rem; border-radius:6px; margin-bottom:1.5rem;">
+        <strong style="color:#991b1b;">⚠️ Reporting a Recurring Issue:</strong>
+        <span style="color:#7f1d1d;" id="recurrenceNoticeText">You are reporting that this problem has appeared again after being resolved.</span>
+      </div>
+
+      <div class="card" style="max-width:850px;">
+        <form id="complaintForm" onsubmit="event.preventDefault(); Complaints.submitComplaint(this);">
+          
+          <div class="form-group">
+            <label class="form-label" for="complaintTitle">Complaint Title *</label>
+            <input type="text" name="title" id="complaintTitle" class="form-control" placeholder="e.g. Hazardous pothole opposite metro pillar 1142" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="complaintCategory">Issue Category *</label>
+              <select name="categoryId" id="complaintCategory" class="form-control" required>
+                <option value="">Loading categories...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="complaintLandmark">Landmark</label>
+              <input type="text" name="landmark" id="complaintLandmark" class="form-control" placeholder="e.g. Near Metro Pillar 1142, opposite State Bank">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="complaintArea">Area / Locality *</label>
+              <input type="text" name="area" id="complaintArea" class="form-control" placeholder="e.g. Kukatpally" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="complaintCity">City *</label>
+              <input type="text" name="city" id="complaintCity" class="form-control" placeholder="e.g. Hyderabad" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="complaintState">State *</label>
+              <input type="text" name="state" id="complaintState" class="form-control" placeholder="e.g. Telangana" required>
+            </div>
+          </div>
+
+          <!-- Geolocation Coordinates -->
+          <div class="form-group" style="background:#f8fafc; padding:1rem; border-radius:var(--radius-sm); border:1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem;">
+              <label class="form-label" style="margin:0;">Geographic GPS Coordinates (Optional, enables 100m proximity matching)</label>
+              <button type="button" id="btnDetectLoc" onclick="Complaints.detectLocation()" class="btn btn-sm btn-secondary">📍 Detect Current GPS</button>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="margin-bottom:0;">
+                <input type="number" step="any" name="latitude" id="latitude" class="form-control" placeholder="Latitude (e.g. 17.4938)">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <input type="number" step="any" name="longitude" id="longitude" class="form-control" placeholder="Longitude (e.g. 78.3995)">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="complaintDesc">Detailed Problem Description *</label>
+            <textarea name="description" id="complaintDesc" class="form-control" rows="4" placeholder="Describe the severity, duration, and safety risk to commuters or pedestrians..." required></textarea>
+          </div>
+
+          <!-- Photograph Upload -->
+          <div class="form-group">
+            <label class="form-label">Photograph Evidence (JPG, PNG, WebP)</label>
+            <div class="file-upload-box" onclick="document.getElementById('evidenceImage').click()">
+              <div class="file-upload-icon">📷</div>
+              <div style="font-weight:600; color:var(--primary);">Click or Drag photograph here to upload</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:0.25rem;">Visual proof speeds up verification and resolution</div>
+              <input type="file" name="image" id="evidenceImage" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="Complaints.handleImagePreview(this, 'imagePreview')">
+              <img id="imagePreview" class="preview-img" alt="Preview">
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:1.5rem;">
+            <a href="/citizen/dashboard.html" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary" style="padding:0.65rem 1.75rem;">Submit Complaint</button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/complaints.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await Auth.requireAuth('CITIZEN');
+      await Complaints.loadCategories('complaintCategory');
+
+      // Check if user is reporting recurrence of a past complaint
+      const params = new URLSearchParams(window.location.search);
+      const recurrenceId = params.get('recurrenceOf');
+      if (recurrenceId) {
+        document.getElementById('recurrenceNotice').style.display = 'block';
+        document.getElementById('recurrenceNoticeText').textContent =
+          `You are reporting a recurrence for previous complaint #${recurrenceId}. Your report will be automatically cross-referenced with previous repair work orders.`;
+
+        // Pre-fill fields from original complaint
+        try {
+          const res = await fetch(`/api/complaints/${recurrenceId}`);
+          const json = await res.json();
+          if (res.ok && json.success) {
+            const c = json.data.complaint;
+            document.getElementById('complaintTitle').value = `[RECURRENCE] ${c.title}`;
+            document.getElementById('complaintArea').value = c.area || '';
+            document.getElementById('complaintCity').value = c.city || '';
+            document.getElementById('complaintState').value = c.state || '';
+            document.getElementById('complaintLandmark').value = c.landmark || '';
+            if (c.categoryId) document.getElementById('complaintCategory').value = c.categoryId;
+            if (c.latitude) document.getElementById('latitude').value = c.latitude;
+            if (c.longitude) document.getElementById('longitude').value = c.longitude;
+          }
+        } catch (e) {
+          console.warn('Could not pre-fill recurrence details', e);
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In - CivicSphere</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+    .auth-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 440px;
+      padding: 2.5rem;
+    }
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .auth-header h2 {
+      font-size: 1.65rem;
+      color: var(--primary);
+    }
+    .auth-header p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 0.3rem;
+    }
+    .auth-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 0.65rem;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: var(--transition);
+    }
+    .auth-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .demo-credentials {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem;
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body class="auth-page">
+
+  <div class="auth-card">
+    <div class="auth-header">
+      <div style="font-size:2.2rem; margin-bottom:0.4rem;">🏛️</div>
+      <h2>CivicSphere Portal</h2>
+      <p>Secure login for citizens and administrators</p>
+    </div>
+
+    <!-- Role Tabs -->
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabCitizen" onclick="switchTab('CITIZEN')">Citizen Login</div>
+      <div class="auth-tab" id="tabAdmin" onclick="switchTab('ADMIN')">Admin Portal</div>
+    </div>
+
+    <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+      <div class="form-group">
+        <label class="form-label" for="loginEmail">Email Address</label>
+        <input type="email" id="loginEmail" class="form-control" placeholder="name@example.com" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+      </div>
+
+      <div id="loginError" style="display:none; color:#dc2626; background:#fee2e2; padding:0.65rem; border-radius:6px; font-size:0.85rem; margin-bottom:1rem;"></div>
+
+      <button type="submit" id="btnLoginSubmit" class="btn btn-primary" style="width:100%; padding:0.75rem;">Sign In</button>
+    </form>
+
+    <div style="text-align:center; margin-top:1.25rem; font-size:0.88rem; color:var(--text-muted);">
+      Don't have a citizen account? <a href="/register.html" style="font-weight:600;">Register Here</a>
+    </div>
+
+    <!-- Quick Demo Accounts for Immediate Testing -->
+    <div class="demo-credentials">
+      <div style="font-weight:700; color:var(--text-main); margin-bottom:0.4rem;">💡 Quick Demo Logins:</div>
+      <div style="display:flex; gap:0.5rem; margin-top:0.4rem;">
+        <button type="button" onclick="fillDemo('citizen@example.com', 'Citizen@123', 'CITIZEN')" class="btn btn-sm btn-secondary" style="flex:1;">👤 Citizen Demo</button>
+        <button type="button" onclick="fillDemo('admin@civicsphere.gov', 'Admin@123', 'ADMIN')" class="btn btn-sm btn-secondary" style="flex:1;">🔒 Admin Demo</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    let currentRole = 'CITIZEN';
+
+    // Check URL params for role
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('role') === 'admin') {
+      switchTab('ADMIN');
+    }
+
+    function switchTab(role) {
+      currentRole = role;
+      document.getElementById('tabCitizen').classList.toggle('active', role === 'CITIZEN');
+      document.getElementById('tabAdmin').classList.toggle('active', role === 'ADMIN');
+      document.getElementById('loginError').style.display = 'none';
+
+      if (role === 'ADMIN') {
+        document.getElementById('loginEmail').placeholder = 'admin@civicsphere.gov';
+      } else {
+        document.getElementById('loginEmail').placeholder = 'citizen@example.com';
+      }
+    }
+
+    function fillDemo(email, pass, role) {
+      switchTab(role);
+      document.getElementById('loginEmail').value = email;
+      document.getElementById('loginPassword').value = pass;
+    }
+
+    async function handleLoginSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('btnLoginSubmit');
+      const errBox = document.getElementById('loginError');
+
+      btn.disabled = true;
+      btn.textContent = 'Authenticating...';
+      errBox.style.display = 'none';
+
+      try {
+        const user = await Auth.login(email, password);
+
+        // Verify role alignment
+        if (currentRole === 'ADMIN' && user.role !== 'ADMIN') {
+          throw new Error('This account does not have administrator privileges.');
+        }
+
+        if (user.role === 'ADMIN') {
+          window.location.href = '/admin/dashboard.html';
+        } else {
+          window.location.href = '/citizen/dashboard.html';
+        }
+
+      } catch (err) {
+        errBox.textContent = err.message || 'Invalid credentials.';
+        errBox.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+      }
+    }
+  </script>
+</body>
+</html>
+
