@@ -44,4 +44,5 @@ COPY --from=build /app/src/main/resources/db.properties ./db.properties
 
 
 
-ENTRYPOINT ["sh","-c","java -cp \"${CP}\" com.civicsphere.CivicSphereServer ${PORT:-10000}"]
+
+"sh","-c","java -cp \"${CP}\" com.civicsphere.CivicSphereServer ${PORT:-10000}"]
