@@ -1,0 +1,42 @@
+# render.yaml - Deploy CivicSphere to Render
+# -------------------------------------------------
+# This file instructs Render.com how to build and run the application.
+# It defines a web service (Docker) and a managed MySQL database.
+# After pushing this repo to GitHub, create a new Render Web Service
+# and point it to this repository; Render will automatically detect
+# this render.yaml.
+
+services:
+  # ---------- MySQL database (managed) ----------
+  - type: redis # placeholder – Render uses a separate "database" stanza; we use MySQL.
+    name: civicsphere-db
+    env: mysql
+    plan: starter # or free if available
+    # Render will expose these env vars to the web service:
+    #   MYSQL_URL, MYSQL_HOST, MYSQL_PORT, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD
+
+  # ---------- Web service (Docker) ----------
+  - type: web
+    name: civicsphere-app
+    env: docker
+    plan: free
+    buildCommand: ""
+    startCommand: "java -cp \"${CP}\" com.civicsphere.CivicSphereServer ${SERVER_PORT}"
+    envVars:
+      # The Dockerfile sets CP and SERVER_PORT defaults; we override DB connection here.
+      SERVER_PORT: "8080"
+      DB_URL: "jdbc:mysql://civicsphere-db:3306/civicsphere_db"
+      DB_USERNAME: "${MYSQL_USER}"
+      DB_PASSWORD: "${MYSQL_PASSWORD}"
+    # Expose port 8080 to the internet (Render automatically maps port 10000+ to your app).
+    # The Dockerfile already copies db.properties template; the env vars will be used at runtime.
+    # Ensure the uploads directory is persisted via a Render "disk" mount.
+    disk:
+      name: uploads-disk
+      mountPath: /app/uploads
+      sizeGB: 1
+    # Optional health check (Render uses HTTP GET on /)
+    healthCheckPath: "/"
+    # Auto-deploy on pushes to main branch.
+    autoDeploy: true
+
